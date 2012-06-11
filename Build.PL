@@ -14,8 +14,9 @@ my $builder = Module::Build->new(
     requires => {
         'perl' => 5.006,
     },
-    add_to_cleanup      => [ 'Sisyphus-*' ],
+    add_to_cleanup      => [ 'Sisyphus-*', 'README' ],
     create_makefile_pl => 'traditional',
+    create_readme => 1,
 );
 
 $builder->create_build_script();
