@@ -10,6 +10,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Sisyphus.pm',
     build_requires => {
         'Test::More' => 0,
+        'Moose' => 0,
         'Moose::Role' => 0,
     },
     requires => {

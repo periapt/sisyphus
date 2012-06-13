@@ -1,10 +1,22 @@
 package Sisyphus::Testable;
 use Moose::Role;
+use 5.006;
 
 requires 'run_test';
 requires 'verify_results';
 
-use 5.006;
+has has_run => (
+    is  => 'ro',
+    isa => 'Bool',
+    writer => '_has_run',
+    default => 0,
+);
+
+after 'run_test' => sub {
+    my $self = shift;
+    $self->_has_run(1);
+    return;
+};
 
 =head1 NAME
 
