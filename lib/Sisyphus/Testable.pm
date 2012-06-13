@@ -24,6 +24,10 @@ has depends_on => (
     default => sub {[]},
 );
 
+sub check_dependencies {
+    return 1;
+}
+
 =head1 NAME
 
 Sisyphus::Testable - something that runs a test and reports back
@@ -58,16 +62,23 @@ purposes.
 
 =head1 ATTRIBUTES
 
-=over
+=head2 has_run
 
-=item B<has_run> - By default this starts a false, and becomes true
+By default this starts a false, and becomes true
 after C<run_test> is run.
 
-=item B<depends_on> - A list of checks for the calling script to verify
+=head2 depends_on
+
+A list of checks for the calling script to verify
 before running the test. The calling script can structure these values
 how it likes.
 
-=back
+=head1 METHODS
+
+=head2 check_dependencies
+
+By default this returns 1. A consuming class may override this
+to give a test external dependencies.
 
 =head1 AUTHOR
 

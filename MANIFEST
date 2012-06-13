@@ -11,6 +11,7 @@ README
 t/00-load.t
 t/01-blahtest.t
 t/lib/Blah.pm
+t/lib/NeverSatisfied.pm
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
