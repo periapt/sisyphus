@@ -18,6 +18,12 @@ after 'run_test' => sub {
     return;
 };
 
+has depends_on => (
+    is  => 'ro',
+    isa => 'ArrayRef[Str]',
+    default => sub {[]},
+);
+
 =head1 NAME
 
 Sisyphus::Testable - something that runs a test and reports back
@@ -39,6 +45,29 @@ our $VERSION = '0.01';
 
     sub run_test {}
     sub verify_results {return 1;}
+
+=head1 DESCRIPTION
+
+The L<Sisyphus::Testable> role encapsulates the sort of test run by the
+sisyphus script. The calling script decides whether to run the test
+based upon the value of the C<depends_on> attribute and the output
+of the C<check_dependencies>. To actually the test all it needs to
+do is run the C<run_test> method. The role will take care of reporting
+the results. The calling script can query the attributes for its own
+purposes.
+
+=head1 ATTRIBUTES
+
+=over
+
+=item B<has_run> - By default this starts a false, and becomes true
+after C<run_test> is run.
+
+=item B<depends_on> - A list of checks for the calling script to verify
+before running the test. The calling script can structure these values
+how it likes.
+
+=back
 
 =head1 AUTHOR
 
