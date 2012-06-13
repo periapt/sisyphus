@@ -18,11 +18,21 @@ has has_run => (
     default => 0,
 );
 
+has has_passed => (
+    is  => 'ro',
+    isa => 'Bool',
+    writer => '_has_passed',
+    default => 0,
+);
+
 after 'run_test' => sub {
     my $self = shift;
     $self->_has_run(1);
 
     croak "could not find any results" if not $self->results;
+    if ($self->verify_results) {
+        $self->_has_passed(1);
+    }
 
     return;
 };
@@ -33,7 +43,7 @@ has depends_on => (
     default => sub {[]},
 );
 
-sub check_dependencies {
+sub check_preconditions {
     return 1;
 }
 
@@ -64,7 +74,7 @@ our $VERSION = '0.01';
 The L<Sisyphus::Testable> role encapsulates the sort of test run by the
 sisyphus script. The calling script decides whether to run the test
 based upon the value of the C<depends_on> attribute and the output
-of the C<check_dependencies>. To actually the test all it needs to
+of the C<check_preconditions>. To actually the test all it needs to
 do is run the C<run_test> method. The role will take care of reporting
 the results. The calling script can query the attributes for its own
 purposes.
@@ -88,7 +98,7 @@ The required C<run_test> method must set this.
 
 =head1 METHODS
 
-=head2 check_dependencies
+=head2 check_preconditions
 
 By default this returns 1. A consuming class may override this
 to give a test external dependencies.

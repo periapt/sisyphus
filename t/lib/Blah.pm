@@ -7,7 +7,8 @@ sub run_test {
     $self->results('blah');
 }
 sub verify_results {
-    return 1;
+    my $self = shift;
+    return $self->results eq 'blah';
 }
 
 1
