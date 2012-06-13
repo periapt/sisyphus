@@ -31,6 +31,13 @@ The tests are configurable so can be adapted to specific needs.
 Tests have dependencies which can be both other tests and anything
 that can be coded as a Perl function.
 
+Afficionados of advanced software naming will immediately recognize that
+"sisyphus" is an acronym for "Systematic Iterative Scripts Yielding Pacific
+Holistic Untroubled Software" and any connection to the king of ancient Greek
+mythology who, as a punishment for his crimes, was obliged to push an
+enormously heavy stone up a mountain only to have to eternally repeat the 
+task on the next day is purely coincidental.
+
 =head1 AUTHOR
 
 Nicholas Bamber, C<< <nicholas at periapt.co.uk> >>
