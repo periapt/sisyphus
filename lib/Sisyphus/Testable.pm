@@ -1,9 +1,15 @@
 package Sisyphus::Testable;
 use Moose::Role;
+use Carp;
 use 5.006;
 
 requires 'run_test';
 requires 'verify_results';
+
+has results => (
+    is => 'rw',
+    isa => 'Str',
+);
 
 has has_run => (
     is  => 'ro',
@@ -15,6 +21,9 @@ has has_run => (
 after 'run_test' => sub {
     my $self = shift;
     $self->_has_run(1);
+
+    croak "could not find any results" if not $self->results;
+
     return;
 };
 
@@ -72,6 +81,10 @@ after C<run_test> is run.
 A list of checks for the calling script to verify
 before running the test. The calling script can structure these values
 how it likes.
+
+=head2 results
+
+The required C<run_test> method must set this.
 
 =head1 METHODS
 
