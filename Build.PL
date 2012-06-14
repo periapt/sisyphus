@@ -12,6 +12,9 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
         'Moose' => 0,
         'Moose::Role' => 0,
+        'Email::Sender' => 0,
+        'MooseX::Types' => 0,
+        'Email::Address' => 0,
     },
     requires => {
         'perl' => 5.006,

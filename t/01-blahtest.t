@@ -1,4 +1,5 @@
 #! /usr/bin/perl -T
+BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
 
 use Test::More tests => 16;
 use Test::Moose;

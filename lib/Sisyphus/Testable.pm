@@ -11,6 +11,17 @@ has results => (
     isa => 'Str',
 );
 
+
+
+has contact_on_pass => (
+    is => 'ro',
+#    required => 1,
+);
+
+has contact_on_fail => (
+    is => 'ro',
+);
+
 has has_run => (
     is  => 'ro',
     isa => 'Bool',
