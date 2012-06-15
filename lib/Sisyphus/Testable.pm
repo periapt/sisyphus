@@ -1,5 +1,6 @@
 package Sisyphus::Testable;
 use Moose::Role;
+use Sisyphus::Types qw(EmailAddress);
 use Carp;
 use 5.006;
 
@@ -11,16 +12,24 @@ has results => (
     isa => 'Str',
 );
 
-
-
 has contact_on_pass => (
     is => 'ro',
-#    required => 1,
+    required => 1,
+    isa => EmailAddress,
 );
 
 has contact_on_fail => (
     is => 'ro',
+    isa => EmailAddress,
+    writer => '_contact_on_fail',
+    lazy => 1,
+    builder => '_build_contact_on_fail',
 );
+
+sub _build_contact_on_fail {
+    my $self = shift;
+    return $self->contact_on_pass;
+}
 
 has has_run => (
     is  => 'ro',
@@ -106,6 +115,14 @@ how it likes.
 =head2 results
 
 The required C<run_test> method must set this.
+
+=head2 contact_on_pass
+
+Who passed test results are sent to. This is a required field.
+
+=head2 contact_on_fail
+
+Who failed test results are sent to. This defaults to C<contact_on_fail>.
 
 =head1 METHODS
 

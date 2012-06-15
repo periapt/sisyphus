@@ -3,12 +3,14 @@ Changes
 ignore.txt
 lib/Sisyphus.pm
 lib/Sisyphus/Testable.pm
+lib/Sisyphus/Types.pm
 Makefile.PL
 MANIFEST			This list of files
 META.json
 META.yml
 t/00-load.t
-t/01-blahtest.t
+t/01-subtypes.t
+t/02-blahtest.t
 t/lib/Blah.pm
 t/lib/NeverSatisfied.pm
 t/manifest.t
