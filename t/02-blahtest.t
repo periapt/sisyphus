@@ -1,7 +1,8 @@
-#! /usr/bin/perl  -T
+#! /usr/bin/perl  
 BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
 
-use Test::More tests => 23;
+use Test::More tests => 26;
+use Test::Deep;
 use Test::Moose;
 use Test::Exception;
 use lib qw(t/lib);
@@ -28,6 +29,28 @@ is($blah->sender, 'sisyphus@periapt.co.uk');
 is($blah->results, 'blah');
 ok($blah->has_run, 'has run');
 ok($blah->has_passed, 'passed');
+my @deliveries = Email::Sender::Simple->default_transport->deliveries;
+cmp_deeply(\@deliveries,
+    [
+        {
+            failures=>[],
+            successes=>['nicholas@periapt.co.uk'],
+            envelope=>ignore(),
+            email=>(bless [noclass({
+                header=>{headers=>[
+                        'To', 'nicholas@periapt.co.uk',
+                        'From', 'sisyphus@periapt.co.uk',
+                        'Subject', re(qr/Blah: \[SUCCESS\] ran at/),
+                        'Date', ignore(),
+                    ],mycrlf=>ignore()},
+                mycrlf=>ignore(),
+                body=>ignore()}),'Email::Abstract::EmailSimple'], 'Email::Abstract'),
+        },
+    ],
+    'deliveries'
+);
+my $stash = $deliveries[0];
+like(${$stash->{email}->[0]->{body}}, qr/blah/, 'email body');
 
 my $neversatisfied = NeverSatisfied->new(
     depends_on=>['chk1','chk2'],
@@ -43,4 +66,25 @@ is($neversatisfied->contact_on_pass, 'nicholas@periapt.co.uk');
 is($neversatisfied->contact_on_fail, 'periapt@debian.org');
 is($neversatisfied->name, 'test2', 'name');
 is($neversatisfied->sender, 'sisyphus@debian.org');
+@deliveries = Email::Sender::Simple->default_transport->deliveries;
+cmp_deeply(\@deliveries,
+    [
+        $stash,
+        {
+            failures=>[],
+            successes=>['nicholas@periapt.co.uk'],
+            envelope=>ignore(),
+            email=>(bless [noclass({
+                header=>{headers=>[
+                        'To', 'nicholas@periapt.co.uk',
+                        'From', 'sisyphus@debian.org',
+                        'Subject', re(qr/test2: \[SUCCESS\] ran at/),
+                        'Date', ignore(),
+                    ],mycrlf=>ignore()},
+                mycrlf=>ignore(),
+                body=>ignore()}),'Email::Abstract::EmailSimple'], 'Email::Abstract'),
+        },
+    ],
+    'deliveries'
+);
 

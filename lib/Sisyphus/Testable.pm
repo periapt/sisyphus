@@ -2,6 +2,9 @@ package Sisyphus::Testable;
 use Moose::Role;
 use Sisyphus::Types qw(EmailAddress);
 use DateTime;
+use Email::Sender::Simple qw(sendmail);
+use Email::Simple;
+use Email::Simple::Creator;
 use 5.006;
 
 requires 'run_test';
@@ -117,6 +120,17 @@ sub _build_results {
              . "\nStop time: "
              . $self->stop_time->strftime($self->strftime_format)
              . "\n\n$results";
+
+    my $email = Email::Simple->create(
+        header => [
+            To  => $email_contact,
+            From => $self->sender,
+            Subject => $subject,
+        ],
+        body => $body,
+    );
+    sendmail($email);
+
     return $results;
 };
 
