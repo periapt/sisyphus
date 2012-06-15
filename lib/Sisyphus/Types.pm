@@ -2,15 +2,19 @@ package Sisyphus::Types;
 use MooseX::Types -declare => [
     qw(
         EmailAddress
+        States
     )
 ];
 use Email::Address;
 use MooseX::Types::Moose qw(Str);
+use Moose::Util::TypeConstraints;
 
 subtype EmailAddress,
     as Str,
     where { scalar Email::Address->parse($_) == 1 },
     message { "Cannot extract exactly one email address from ($_)" };
+
+enum States, [qw(PASS FAIL SKIPPED UNTRIED)];
 
 =head1 NAME
 
@@ -29,6 +33,10 @@ our $VERSION = '0.01';
 =head2 EmailAddress
 
 A string that parses as an email address.
+
+=head2 States
+
+One of 'PASS', 'FAIL', 'UNTRIED', 'SKIPPED'.
 
 =head1 AUTHOR
 
