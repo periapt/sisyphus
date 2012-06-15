@@ -1,6 +1,7 @@
 package Sisyphus::Testable;
 use Moose::Role;
 use Sisyphus::Types qw(EmailAddress);
+use DateTime;
 use Carp;
 use 5.006;
 
@@ -8,8 +9,10 @@ requires 'run_test';
 requires 'verify_results';
 
 has results => (
-    is => 'rw',
+    is => 'ro',
     isa => 'Str',
+    lazy => 1,
+    builder => '_build_results',
 );
 
 has name => (
@@ -17,6 +20,12 @@ has name => (
     isa => 'Str',
     lazy => 1,
     builder => '_build_name',
+);
+
+has start_time => (
+    is => 'ro',
+    isa => 'DateTime',
+    writer => '_start_time',
 );
 
 sub _build_name {
@@ -57,20 +66,23 @@ has has_passed => (
     default => 0,
 );
 
-after 'run_test' => sub {
+sub _build_results {
     my $self = shift;
+
+    my $results = $self->run_test;
+    croak "could not find any results" if not $results;
+
     $self->_has_run(1);
 
-    croak "could not find any results" if not $self->results;
     my $email_contact = $self->contact_on_pass;
-    if ($self->verify_results) {
+    if ($self->verify_results($results)) {
         $self->_has_passed(1);
     }
     else {
         $email_contact = $self->contact_on_fail;
     }
 
-    return;
+    return $results;
 };
 
 has depends_on => (
@@ -102,8 +114,8 @@ our $VERSION = '0.01';
     use Moose;
     with 'Sisyphus::Testable';
 
-    sub run_test {}
-    sub verify_results {return 1;}
+    sub run_test {return "Does this look okay?"}
+    sub verify_results {my $self = shift; return $self =~ /okay/;}
 
 =head1 DESCRIPTION
 
@@ -111,8 +123,8 @@ The L<Sisyphus::Testable> role encapsulates the sort of test run by the
 sisyphus script. The calling script decides whether to run the test
 based upon the value of the C<depends_on> attribute and the output
 of the C<check_preconditions>. To actually the test all it needs to
-do is run the C<run_test> method. The role will take care of reporting
-the results. The calling script can query the attributes for its own
+do is access the C<results> attribute. The role will take care of reporting
+the results. The calling script can query the other attributes for its own
 purposes.
 
 =head1 ATTRIBUTES
@@ -130,7 +142,7 @@ how it likes.
 
 =head2 results
 
-The required C<run_test> method must set this.
+Access this runs the C<run_test> method and captures all the associated data.
 
 =head2 contact_on_pass
 
