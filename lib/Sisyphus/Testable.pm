@@ -2,7 +2,6 @@ package Sisyphus::Testable;
 use Moose::Role;
 use Sisyphus::Types qw(EmailAddress);
 use DateTime;
-use Carp;
 use 5.006;
 
 requires 'run_test';
@@ -28,6 +27,18 @@ has start_time => (
     writer => '_start_time',
 );
 
+has stop_time => (
+    is => 'ro',
+    isa => 'DateTime',
+    writer => '_stop_time',
+);
+
+has strftime_format => (
+    is => 'ro',
+    isa => 'Str',
+    default => '%c',
+);
+
 sub _build_name {
     my $self = shift;
     return ($self->meta->class_precedence_list)[0];
@@ -45,6 +56,12 @@ has contact_on_fail => (
     writer => '_contact_on_fail',
     lazy => 1,
     builder => '_build_contact_on_fail',
+);
+
+has sender => (
+    is => 'ro',
+    isa => EmailAddress,
+    required => 1,
 );
 
 sub _build_contact_on_fail {
@@ -69,19 +86,37 @@ has has_passed => (
 sub _build_results {
     my $self = shift;
 
-    my $results = $self->run_test;
-    croak "could not find any results" if not $results;
-
+    my $err = undef;
+    $self->_start_time(DateTime->now);
+    my $results = eval { $self->run_test};
+    if ($err = $@) {
+        $results = "Fatal error: [$err] $results";
+    }
+    $self->_stop_time(DateTime->now);
     $self->_has_run(1);
+    if (not $results) {
+        $err = $results = "could not find any results";
+    }
 
     my $email_contact = $self->contact_on_pass;
-    if ($self->verify_results($results)) {
+    if (defined $err and $self->verify_results($results)) {
         $self->_has_passed(1);
     }
     else {
         $email_contact = $self->contact_on_fail;
     }
 
+    my $subject = $self->name
+                . ": ["
+                . ($self->has_passed ? "SUCCESS" : "FAILED")
+                . "] ran at "
+                . $self->start_time->strftime($self->strftime_format);
+
+    my $body = "Start time: "
+             . $self->start_time->strftime($self->strftime_format)
+             . "\nStop time: "
+             . $self->stop_time->strftime($self->strftime_format)
+             . "\n\n$results";
     return $results;
 };
 
@@ -151,6 +186,15 @@ Who passed test results are sent to. This is a required field.
 =head2 contact_on_fail
 
 Who failed test results are sent to. This defaults to C<contact_on_fail>.
+
+=head2 start_time, stop_time
+
+These are L<DateTime> objects captured just before and after the test is
+run.
+
+=head2 strftime_format
+
+This is the format used to display the timestamps in the email.
 
 =head2 name
 
