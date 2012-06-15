@@ -12,6 +12,18 @@ has results => (
     isa => 'Str',
 );
 
+has name => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    builder => '_build_name',
+);
+
+sub _build_name {
+    my $self = shift;
+    return ($self->meta->class_precedence_list)[0];
+}
+
 has contact_on_pass => (
     is => 'ro',
     required => 1,
@@ -50,8 +62,12 @@ after 'run_test' => sub {
     $self->_has_run(1);
 
     croak "could not find any results" if not $self->results;
+    my $email_contact = $self->contact_on_pass;
     if ($self->verify_results) {
         $self->_has_passed(1);
+    }
+    else {
+        $email_contact = $self->contact_on_fail;
     }
 
     return;
@@ -123,6 +139,11 @@ Who passed test results are sent to. This is a required field.
 =head2 contact_on_fail
 
 Who failed test results are sent to. This defaults to C<contact_on_fail>.
+
+=head2 name
+
+The C<name> attribute is used by sisyphus to identify a particular test
+and its results. For the absolutely lazy it defaults to the class name.
 
 =head1 METHODS
 

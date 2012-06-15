@@ -1,7 +1,7 @@
 #! /usr/bin/perl -T
 BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
 
-use Test::More tests => 20;
+use Test::More tests => 22;
 use Test::Moose;
 use Test::Exception;
 use lib qw(t/lib);
@@ -21,6 +21,7 @@ ok($blah->check_preconditions, 'check_preconditions - 1');
 isnt($blah->has_run, 1, 'has not run');
 is($blah->results, undef);
 is($blah->has_passed, 0, 'has not passed');
+is($blah->name, 'Blah', 'name');
 $blah->run_test;
 ok($blah->has_run, 'has run');
 is($blah->results, 'blah');
@@ -30,10 +31,12 @@ my $neversatisfied = NeverSatisfied->new(
     depends_on=>['chk1','chk2'],
     contact_on_pass=>'nicholas@periapt.co.uk',
     contact_on_fail=>'periapt@debian.org',
+    name=>'test2',
 );
 is_deeply($neversatisfied->depends_on, ['chk1','chk2']);
 is($neversatisfied->check_preconditions, 0, 'check_preconditions - 0');
 throws_ok(sub{$neversatisfied->run_test}, qr/could not find any results/);
 is($neversatisfied->contact_on_pass, 'nicholas@periapt.co.uk');
 is($neversatisfied->contact_on_fail, 'periapt@debian.org');
+is($neversatisfied->name, 'test2', 'name');
 
