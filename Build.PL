@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More' => 0,
         'Test::Deep' => 0,
+        'Test::File'=> 0,
         'Moose' => 0,
         'Moose::Role' => 0,
         'Email::Sender' => 0,

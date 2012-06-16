@@ -1,8 +1,9 @@
 package Sisyphus::Status;
 use Moose;
+use Sisyphus::Types qw(State);
 use MooseX::Params::Validate;
-use Sisyphus::Types qw(States);
 use SDBM_File;
+use Fcntl qw(O_CREAT O_RDWR);
 
 has filename => (
     is => 'ro',
@@ -10,15 +11,25 @@ has filename => (
     required => 1,
 );
 
+has _test => (
+    is => 'ro',
+    lazy => 1,
+    builder => '_builder_test',
+);
+
+sub _builder_test {
+    my $self = shift;
+    my %h;
+    return \%h;
+}
+
 has _impl => (
     is => 'ro',
-    isa => 'HashRef',
     builder => '_builder_impl',
     lazy => 1,
 );
 
 sub _builder_impl {
-    use Fcntl qw(O_CREAT O_RDWR);
     my $self = shift;
     my %h;
     my $filename = $self->filename;
@@ -40,23 +51,25 @@ sub DEMOLISH {
 }
 
 sub get_status {
-    my ($self, %params) = validated_hash(
+    my $self = shift;
+    my ($name) = pos_validated_list(
         \@_,
-        name => { isa => 'Str' },
+        {isa => 'Str'},
     );
-    if (exists $self->_impl->{$params{name}}) {
-        return $self->_impl->{$params{name}};
+    if (exists $self->_impl->{$name}) {
+        return $self->_impl->{$name};
     }
     return 'UNTRIED';
 }
 
 sub set_status {
-    my ($self, %params) = validated_hash(
+    my ($self, $name, $state) = pos_validated_list(
         \@_,
-        name => { isa => 'Str' },
-        state => {isa => 'State' },
+        {isa => 'Sisyphus::Status'},
+        {isa => 'Str'},
+        {isa => 'Sisyphus::Types::State' },
     );
-    $self->_impl->{$params{name}} = $params{state};
+    $self->_impl->{$name} = $state;
     return;
 }
 

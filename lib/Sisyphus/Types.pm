@@ -2,7 +2,7 @@ package Sisyphus::Types;
 use MooseX::Types -declare => [
     qw(
         EmailAddress
-        States
+        State
     )
 ];
 use Email::Address;
@@ -14,7 +14,7 @@ subtype EmailAddress,
     where { scalar Email::Address->parse($_) == 1 },
     message { "Cannot extract exactly one email address from ($_)" };
 
-enum States, [qw(PASS FAIL SKIPPED UNTRIED)];
+enum State, [qw(PASS FAIL SKIPPED UNTRIED)];
 
 =head1 NAME
 
