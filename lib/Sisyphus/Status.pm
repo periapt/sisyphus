@@ -2,7 +2,6 @@ package Sisyphus::Status;
 use Moose;
 use MooseX::Params::Validate;
 use Sisyphus::Types qw(States);
-use Fcntl;
 use SDBM_File;
 
 has filename => (
@@ -14,10 +13,31 @@ has filename => (
 has _impl => (
     is => 'ro',
     isa => 'HashRef',
-    lazy => 1,
     builder => '_builder_impl',
-    clearer => 'purge',
+    lazy => 1,
 );
+
+sub _builder_impl {
+    use Fcntl qw(O_CREAT O_RDWR);
+    my $self = shift;
+    my %h;
+    my $filename = $self->filename;
+    tie(%h, 'SDBM_File', $filename, O_RDWR|O_CREAT, 0666)
+        or die "Couldn't tie SDBM file '$filename': $!; aborting";
+    return \%h;
+}
+
+sub remove_old_file {
+    my $self = shift;
+    unlink $self->filename;
+    return;
+}
+
+sub DEMOLISH {
+    my $self = shift;
+    untie %{$self->_impl};
+    return;
+}
 
 sub get_status {
     my ($self, %params) = validated_hash(
@@ -47,6 +67,31 @@ Sisyphus::Status - persistent record of test results
 =head1 VERSION
 
 Version 0.01
+
+=head1 DESCRIPTION
+
+L<Sisyphus::Status> provides a persistent record of which
+tests have successfully run. This is so that after a hardware
+failure or perhaps a tweak to the configuration, tests may be
+resumed. Four states are supported: 'PASS', 'FAIL', 'SKIPPED' or
+'UNTRIED'. The last is the default state.
+
+=head1 METHODS
+
+=head2 get_status
+
+Takes a name and returns the corresponding state.
+
+=head2 set_status
+
+Takes a name and a state and records the status accordingly.
+
+=head2 remove_old_file
+
+This is called on creation to force a complete test run, if that
+is required.
+
+=head2 DEMOLISH
 
 =cut
 
