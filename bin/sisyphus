@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Sisyphus::App;
+
+my $app = Sisyphus::App->new_with_options();
