@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
         'MooseX::Types' => 0,
         'MooseX::Params::Validate' => 0,
         'MooseX::Getopt' => 0,
+        #'MooseX::Getopt::Usage' => 0,
         'Email::Address' => 0,
         'DateTime' => 0,
     },

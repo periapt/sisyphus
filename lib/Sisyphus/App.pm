@@ -1,30 +1,36 @@
 package Sisyphus::App;
 use Moose;
 
-with 'MooseX::Getopt';
+#with 'MooseX::Getopt::Usage';
+with 'MooseX::SimpleConfig',
+     'MooseX::Getopt';
 
-has 'dry-run' => (
+has dry_run => (
     is => 'ro',
     isa => 'Bool',
     default => 0,
+    documentation => qq{Just say what we would do; not actually do it.},
 );
 
-has 'purge-test-status' => (
+has clean_test_workspace => (
     is => 'ro',
     isa => 'Bool',
     default => 0,
+    documentation => qq{Clean the directory and associated schroots before starting.},
 );
 
-has 'list-test-status' => (
+has list_test_status => (
     is => 'ro',
     isa => 'Bool',
     default => 0,
+    documentation => qq{List the status of the tests.},
 );
 
-has 'retry-test' => (
+has retry_test => (
     is => 'ro',
     isa => 'ArrayRef[Str]',
     default => sub { [] },
+    documentation => qq{Mark the given test UNTRIED. Can be applied multiple times.},
 );
 
 =head1 NAME
@@ -37,7 +43,7 @@ Version 0.01
 
 =head1 DESCRIPTION
 
-L<Sisyphus::Status> provides a persistent record of which
+L<Sisyphus::App> provides a persistent record of which
 tests have successfully run. This is so that after a hardware
 failure or perhaps a tweak to the configuration, tests may be
 resumed. Four states are supported: 'PASS', 'FAIL', 'SKIPPED' or
