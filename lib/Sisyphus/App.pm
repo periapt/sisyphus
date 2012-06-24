@@ -50,6 +50,10 @@ has tests => (
     documentation => qq{List of tests to be run.},
 );
 
+sub run {
+    return 1;
+}
+
 =head1 NAME
 
 Sisyphus::App - core functionality of sisyphus
@@ -68,20 +72,10 @@ resumed. Four states are supported: 'PASS', 'FAIL', 'SKIPPED' or
 
 =head1 METHODS
 
-=head2 get_status
+=head2 run
 
-Takes a name and returns the corresponding state.
-
-=head2 set_status
-
-Takes a name and a state and records the status accordingly.
-
-=head2 remove_old_file
-
-This is called on creation to force a complete test run, if that
-is required.
-
-=head2 DEMOLISH
+This method reads the list of tests from config file, runs each
+test and records the state in the status object.
 
 =cut
 

@@ -16,3 +16,4 @@ t/lib/NeverSatisfied.pm
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
+README
