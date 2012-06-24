@@ -33,6 +33,11 @@ has retry_test => (
     documentation => qq{Mark the given test UNTRIED. Can be applied multiple times.},
 );
 
+has '+configfile' => (
+    default => '/etc/sisyphus.yaml',
+    documentation => qq{Config file. Defaults to /etc/sisyphus.yaml.},
+);
+
 =head1 NAME
 
 Sisyphus::App - core functionality of sisyphus

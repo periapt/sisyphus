@@ -1,0 +1,21 @@
+---
+workspace-dir: t/tmp
+tests:
+    - 
+        name: test1
+        result: pass
+    -
+        name: test2
+        result: fail
+    -
+        name: test3
+        result: pass
+    -
+        name: test4
+        result: pass
+        depends:
+            - test2
+    -
+        name: test5
+        result: pass
+...
