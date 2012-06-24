@@ -12,6 +12,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
         'Test::Deep' => 0,
         'Test::File'=> 0,
+        'Test::Compile'=>0,
         'Moose' => 0,
         'Moose::Role' => 0,
         'Email::Sender' => 0,

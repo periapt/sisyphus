@@ -1,6 +1,7 @@
-#!perl -T
+#!perl 
 
-use Test::More tests => 5;
+use Test::More tests => 6;
+use Test::Compile;
 
 BEGIN {
     use_ok( 'Sisyphus' ) || print "Bail out!\n";
@@ -11,3 +12,4 @@ BEGIN {
 }
 
 diag( "Testing Sisyphus $Sisyphus::VERSION, Perl $], $^X" );
+pl_file_ok('bin/sisyphus');
