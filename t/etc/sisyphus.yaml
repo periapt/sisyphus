@@ -1,5 +1,5 @@
 ---
-workspace-dir: t/tmp
+workspace_dir: t/tmp
 tests:
     - 
         name: test1

@@ -38,6 +38,18 @@ has '+configfile' => (
     documentation => qq{Config file. Defaults to /etc/sisyphus.yaml.},
 );
 
+has workspace_dir => (
+    is => 'ro',
+    isa => 'Str',
+    documentation => qq{Directory used to store all test related data.},
+);
+
+has tests => (
+    is => 'ro',
+    isa => 'Maybe[ArrayRef]',
+    documentation => qq{List of tests to be run.},
+);
+
 =head1 NAME
 
 Sisyphus::App - core functionality of sisyphus
