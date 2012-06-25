@@ -5,6 +5,7 @@ use Moose;
 with 'MooseX::SimpleConfig',
      'MooseX::Getopt';
 use Sisyphus::Types qw(WritableDirectory);
+use Sisyphus::Status;
 
 has dry_run => (
     is => 'ro',
@@ -51,6 +52,13 @@ has tests => (
     documentation => qq{List of tests to be run.},
 );
 
+has _status => (
+    is => 'ro',
+    isa => 'Sisyphus::Status',
+    lazy => 1,
+    builder => '_builder_status',
+);
+
 sub run {
     return 1;
 }
@@ -58,7 +66,23 @@ sub run {
 sub get_status_summary {
     my $self = shift;
     my $line_format = shift;
-    return "";
+    my $summary = "";
+    foreach my $test (@{$self->tests}) {
+        my $name = $test->{name};
+        my $state = $self->_status->get_status($name);
+        $summary .= sprintf $line_format, $name, $state;
+    }
+    return $summary;
+}
+
+sub _builder_status {
+    my $self = shift;
+    my $filename = $self->workspace_dir."/sisyphus";
+    my $status = Sisyphus::Status->new(filename => $filename);
+    foreach my $retry (@{$self->retry_test}) {
+        $status->set_status($retry, 'UNTRIED');
+    }
+    return $status;
 }
 
 =head1 NAME
