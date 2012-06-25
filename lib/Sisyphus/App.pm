@@ -55,6 +55,12 @@ sub run {
     return 1;
 }
 
+sub get_status_summary {
+    my $self = shift;
+    my $line_format = shift;
+    return "";
+}
+
 =head1 NAME
 
 Sisyphus::App - core functionality of sisyphus
@@ -77,6 +83,16 @@ resumed. Four states are supported: 'PASS', 'FAIL', 'SKIPPED' or
 
 This method reads the list of tests from config file, runs each
 test and records the state in the status object.
+
+=head2 get_status_summary
+
+Returns a sting representing the current test status. The string 
+is a concatenation of smaller strings, whose format is determined
+by the line format parameter, which is a C<sprintf> format string.
+The line format parameter must contain two C<%s> directives. The
+first is for the test name and the secon for the corresponding
+L<Sisyphus::Types::State> value.
+
 
 =cut
 
