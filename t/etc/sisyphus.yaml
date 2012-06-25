@@ -3,19 +3,19 @@ workspace_dir: t/tmp
 tests:
     - 
         name: test1
-        result: pass
+        result: PASS
     -
         name: test2
-        result: fail
+        result: FAIL
     -
         name: test3
-        result: pass
+        result: PASS
     -
         name: test4
-        result: pass
+        result: PASS
         depends:
             - test2
     -
         name: test5
-        result: pass
+        result: PASS
 ...

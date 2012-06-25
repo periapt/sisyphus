@@ -60,6 +60,17 @@ has _status => (
 );
 
 sub run {
+    my $self = shift;
+    foreach my $test (@{$self->tests}) {
+        my $name = $test->{name};
+        my $state = $self->_status->get_status($name);
+        next if $state ne 'UNTRIED';
+        if (not $self->_check_depends(@{$test->{depends}})) {
+            $self->_status->set_status($name, 'SKIPPED');
+            next;
+        }
+        $self->_status->set_status($name, $test->{result});
+    }
     return 1;
 }
 
@@ -83,6 +94,15 @@ sub _builder_status {
         $status->set_status($retry, 'UNTRIED');
     }
     return $status;
+}
+
+sub _check_depends {
+    my $self = shift;
+    my @depends = @_;
+    foreach my $test (@depends) {
+        return 0 if $self->_status->get_status($test) ne 'PASS';
+    }
+    return 1;
 }
 
 =head1 NAME
