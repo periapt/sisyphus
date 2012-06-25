@@ -4,6 +4,7 @@ use Moose;
 #with 'MooseX::Getopt::Usage';
 with 'MooseX::SimpleConfig',
      'MooseX::Getopt';
+use Sisyphus::Types qw(WritableDirectory);
 
 has dry_run => (
     is => 'ro',
@@ -40,7 +41,7 @@ has '+configfile' => (
 
 has workspace_dir => (
     is => 'ro',
-    isa => 'Str',
+    isa => WritableDirectory,
     documentation => qq{Directory used to store all test related data.},
 );
 

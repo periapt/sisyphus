@@ -3,6 +3,8 @@
 use Test::More tests => 2;
 use Sisyphus::App;
 
+mkdir 't/tmp';
+
 subtest dry_run => sub {
     plan tests => 5;
     my $app = Sisyphus::App->new_with_config(
@@ -29,4 +31,4 @@ subtest real_thing => sub {
     is($app->run, 1);
 };
 
-
+rmdir 't/tmp';

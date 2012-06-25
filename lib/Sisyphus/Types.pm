@@ -3,6 +3,7 @@ use MooseX::Types -declare => [
     qw(
         EmailAddress
         State
+        WritableDirectory
     )
 ];
 use Email::Address;
@@ -13,6 +14,18 @@ subtype EmailAddress,
     as Str,
     where { scalar Email::Address->parse($_) == 1 },
     message { "Cannot extract exactly one email address from ($_)" };
+
+subtype WritableDirectory,
+    as Str,
+    where { -d $_ and -w $_ },
+    message { "$_ is not a writable directory" };
+
+sub _blah {
+    my $dir = shift;
+    return 0 if not -d $dir;
+    return 0 if not -w $dir;
+    return 1;
+}
 
 enum State, [qw(PASS FAIL SKIPPED UNTRIED)];
 
