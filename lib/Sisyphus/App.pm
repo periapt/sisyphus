@@ -69,7 +69,9 @@ sub run {
             $self->_status->set_status($name, 'SKIPPED');
             next;
         }
-        $self->_status->set_status($name, $test->{result});
+        if (not $self->dry_run) {
+            $self->_status->set_status($name, $test->{result});
+        }
     }
     return 1;
 }
