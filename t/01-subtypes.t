@@ -1,6 +1,7 @@
 #! /usr/bin/perl -T
 
-use Test::More tests => 9;
+use Test::More tests => 10;
+use Test::NoWarnings;
 use Sisyphus::Types qw(EmailAddress State WritableDirectory);
 
 is(is_EmailAddress('Nicholas Bamber <nicholas@periapt.co.uk>'), 1);

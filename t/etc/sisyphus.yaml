@@ -1,21 +1,32 @@
 ---
 workspace_dir: t/tmp
+default_args:
 tests:
     - 
         name: test1
-        result: PASS
+        module: Deterministic
+        args:
+            results: PASS
     -
         name: test2
-        result: FAIL
+        module: Deterministic
+        args:
+            results: FAIL
     -
         name: test3
-        result: PASS
+        module: Deterministic
+        args:
+            results: PASS
     -
         name: test4
-        result: PASS
-        depends:
-            - test2
+        module: Deterministic
+        args:
+            results: PASS
+            depends:
+                - test2
     -
         name: test5
-        result: PASS
+        module: Deterministic
+        args:
+            results: PASS
 ...

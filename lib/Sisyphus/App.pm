@@ -1,7 +1,6 @@
 package Sisyphus::App;
 use Moose;
 
-#with 'MooseX::Getopt::Usage';
 with 'MooseX::SimpleConfig',
      'MooseX::Getopt';
 use Sisyphus::Types qw(WritableDirectory);
@@ -35,6 +34,13 @@ has retry_test => (
     documentation => qq{Mark the given test UNTRIED. Can be applied multiple times.},
 );
 
+has default_args => (
+    is => 'ro',
+    isa => 'HashRef[Str]',
+    default => sub {{}},
+    documentation => qq{Arguments to be passed to every test unless overridden.},
+);
+
 has '+configfile' => (
     default => '/etc/sisyphus.yaml',
     documentation => qq{Config file. Defaults to /etc/sisyphus.yaml.},
@@ -65,7 +71,19 @@ sub run {
         my $name = $test->{name};
         my $state = $self->_status->get_status($name);
         next if $state ne 'UNTRIED';
-        if (not $self->_check_depends(@{$test->{depends}})) {
+        my $module = $test->{module};
+        my %args = (%{$self->default_args}, %{$test->{args}});
+        my $test_obj = eval {$module->new(%args)};
+        if (not $test_obj) {
+            warn $@;
+            $self->_status->set_status($name, 'SKIPPED');
+            next;
+        }
+        if (not $self->_check_depends(@{$test_obj->depends})) {
+            $self->_status->set_status($name, 'SKIPPED');
+            next;
+        }
+        if (not $test_obj->check_precondition) {
             $self->_status->set_status($name, 'SKIPPED');
             next;
         }
@@ -73,7 +91,15 @@ sub run {
             $self->_status->set_status($name, 'PASS');
         }
         else {
-            $self->_status->set_status($name, $test->{result});
+            my $status = 'FAIL';
+            my $results = eval {$test_obj->results};
+            if ($@) {
+                $self->_status->set_status($name, $status);
+            }
+            $self->_status->set_status(
+                $name,
+                $test_obj->has_passed ? 'PASS' : 'FAIL'
+            );
         }
     }
     return 1;
