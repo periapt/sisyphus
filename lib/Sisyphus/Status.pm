@@ -11,6 +11,12 @@ has filename => (
     required => 1,
 );
 
+has dry_run => (
+    is => 'ro',
+    isa => 'Bool',
+    default => 0,
+);
+
 has _test => (
     is => 'ro',
     lazy => 1,
@@ -33,7 +39,9 @@ sub _builder_impl {
     my $self = shift;
     my %h;
     my $filename = $self->filename;
-    tie(%h, 'SDBM_File', $filename, O_RDWR|O_CREAT, 0666)
+    return \%h if not -f $filename and $self->dry_run;
+    my $flags = $self->dry_run ? 0 : O_RDWR|O_CREAT;
+    tie(%h, 'SDBM_File', $filename, $flags, 0666)
         or die "Couldn't tie SDBM file '$filename': $!; aborting";
     return \%h;
 }

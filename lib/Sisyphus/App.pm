@@ -69,7 +69,10 @@ sub run {
             $self->_status->set_status($name, 'SKIPPED');
             next;
         }
-        if (not $self->dry_run) {
+        if ($self->dry_run) {
+            $self->_status->set_status($name, 'PASS');
+        }
+        else {
             $self->_status->set_status($name, $test->{result});
         }
     }
@@ -91,7 +94,10 @@ sub get_status_summary {
 sub _builder_status {
     my $self = shift;
     my $filename = $self->workspace_dir."/sisyphus";
-    my $status = Sisyphus::Status->new(filename => $filename);
+    my $status = Sisyphus::Status->new(
+        filename => $filename,
+        dry_run => $self->dry_run,
+    );
     foreach my $retry (@{$self->retry_test}) {
         $status->set_status($retry, 'UNTRIED');
     }
