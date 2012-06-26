@@ -1,32 +1,34 @@
 ---
 workspace_dir: t/tmp
 default_args:
+    contact_on_pass: periapt@debian.org
+    sender: nicholas@periapt.co.uk
 tests:
     - 
         name: test1
         module: Deterministic
         args:
-            results: PASS
+            results_value: PASS
     -
         name: test2
         module: Deterministic
         args:
-            results: FAIL
+            results_value: FAIL
     -
         name: test3
         module: Deterministic
         args:
-            results: PASS
+            results_value: PASS
     -
         name: test4
         module: Deterministic
         args:
-            results: PASS
-            depends:
+            results_value: PASS
+            depends_on:
                 - test2
     -
         name: test5
         module: Deterministic
         args:
-            results: PASS
+            results_value: PASS
 ...

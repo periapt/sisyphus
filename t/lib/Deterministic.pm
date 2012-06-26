@@ -2,7 +2,15 @@ package Deterministic;
 use Moose;
 with 'Sisyphus::Testable';
 
-sub run_test {}
+has results_value => (
+    is => 'ro',
+    isa => 'Str',
+);
+
+sub run_test {
+    my $self = shift;
+    return $self->results_value;
+}
 sub verify_results {
     my $self = shift;
     my $results = shift;

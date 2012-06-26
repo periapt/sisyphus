@@ -4,6 +4,7 @@ use Test::More tests => 2;
 use Sisyphus::App;
 use File::Path qw(remove_tree);
 use Test::Deep;
+use lib qw(t/lib);
 
 mkdir 't/tmp';
 

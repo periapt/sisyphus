@@ -5,6 +5,7 @@ with 'MooseX::SimpleConfig',
      'MooseX::Getopt';
 use Sisyphus::Types qw(WritableDirectory);
 use Sisyphus::Status;
+use UNIVERSAL::require;
 
 has dry_run => (
     is => 'ro',
@@ -36,7 +37,7 @@ has retry_test => (
 
 has default_args => (
     is => 'ro',
-    isa => 'HashRef[Str]',
+    isa => 'Any',
     default => sub {{}},
     documentation => qq{Arguments to be passed to every test unless overridden.},
 );
@@ -73,17 +74,18 @@ sub run {
         next if $state ne 'UNTRIED';
         my $module = $test->{module};
         my %args = (%{$self->default_args}, %{$test->{args}});
-        my $test_obj = eval {$module->new(%args)};
+        $module->require;
+        my $test_obj = $module->new(%args);
         if (not $test_obj) {
             warn $@;
             $self->_status->set_status($name, 'SKIPPED');
             next;
         }
-        if (not $self->_check_depends(@{$test_obj->depends})) {
+        if (not $self->_check_depends(@{$test_obj->depends_on})) {
             $self->_status->set_status($name, 'SKIPPED');
             next;
         }
-        if (not $test_obj->check_precondition) {
+        if (not $test_obj->check_preconditions) {
             $self->_status->set_status($name, 'SKIPPED');
             next;
         }
