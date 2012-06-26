@@ -1,6 +1,22 @@
-#!/usr/bin/perl -T
+#!/usr/bin/perl 
 use strict;
 use warnings;
 use Sisyphus::App;
+use File::Path qw(remove_tree);
 
 my $app = Sisyphus::App->new_with_options();
+
+if ($app->list_test_status) {
+    print $app->get_status_summary('%s: %s\n');
+    exit 0;
+}
+
+if ($app->clean_test_workspace) {
+    my $dir = $app->workspace_dir;
+    print "cleaning: $dir\n";
+    return if $app->dry_run;
+    remove_tree($app->workspace_dir, {keep_root=>1});
+}
+
+$app->run;
+

@@ -1,0 +1,34 @@
+---
+workspace_dir: /home/sisyphus/mysql-5.5
+default_args:
+    contact_on_pass: nicholas@periapt.co.uk
+    sender: periapt@debian.org
+tests:
+    - 
+        name: test1
+        module: Deterministic
+        args:
+            results_value: PASS
+    -
+        name: test2
+        module: Deterministic
+        args:
+            results_value: FAIL
+    -
+        name: test3
+        module: Deterministic
+        args:
+            results_value: PASS
+    -
+        name: test4
+        module: Deterministic
+        args:
+            results_value: PASS
+            depends_on:
+                - test2
+    -
+        name: test5
+        module: Deterministic
+        args:
+            results_value: PASS
+...

@@ -1,4 +1,5 @@
 #! /usr/bin/perl  
+BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
 
 use Test::More tests => 2;
 use Sisyphus::App;
