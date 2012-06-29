@@ -5,10 +5,8 @@ default_args:
     contact_on_pass: periapt@debian.org
 tests:
     - 
-        name: test1
-        module: Deterministic
-        args:
-            results_value: PASS
+        name: build_from_scratch
+        module: BuildFromScratch
     -
         name: test2
         module: Deterministic

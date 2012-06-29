@@ -1,6 +1,6 @@
 #!perl 
 
-use Test::More tests => 8;
+use Test::More tests => 9;
 use Test::NoWarnings;
 use Test::Compile;
 
@@ -10,7 +10,8 @@ BEGIN {
     use_ok( 'Sisyphus::Types' ) || print "Bail out!\n";
     use_ok( 'Sisyphus::Status' ) || print "Bail out!\n";
     use_ok( 'Sisyphus::App' ) || print "Bail out!\n";
-    use_ok( 'Sisyphus::Schrooting' ) || print "Bail out!\n";
+    use_ok( 'Sisyphus::Session' ) || print "Bail out!\n";
+    use_ok( 'Sisyphus::Tests::BuildFromScratch' ) || print "Bail out!\n";
 }
 
 diag( "Testing Sisyphus $Sisyphus::VERSION, Perl $], $^X" );
