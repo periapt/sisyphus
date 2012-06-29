@@ -1,8 +1,8 @@
 ---
 workspace_dir: /home/sisyphus/mysql-5.5
 default_args:
-    contact_on_pass: nicholas@periapt.co.uk
-    sender: periapt@debian.org
+    sender: np.bamber@gmail.com
+    contact_on_pass: periapt@debian.org
 tests:
     - 
         name: test1

@@ -22,6 +22,8 @@ my $builder = Module::Build->new(
         'MooseX::Types' => 0,
         'MooseX::Params::Validate' => 0,
         'MooseX::Getopt' => 0,
+        'Perl6::Slurp' => 0,
+        'System::Command' => 0,
         'UNIVERSAL::require' => 0,
     },
     requires => {
