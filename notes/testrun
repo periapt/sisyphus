@@ -1,0 +1,26 @@
+#!/bin/dash -e
+
+SHOME=/home/sisyphus
+TARFILE=mysql-5.5_5.5.25+dfsg.orig.tar.gz
+
+cd $SHOME
+rm -rf mysql-5.5
+debcheckout mysql-5.5
+cp -v $SHOME/data/$TARFILE $SHOME/mysql-5.5/branches
+tar xzvf $HOME/data/$TARFILE -C $SHOME/mysql-5.5/branches/experimental --strip-components 1
+
+HANDLE=`schroot -b -c sisyphus`
+echo $HANDLE>>$SHOME/current
+
+schroot -u root -r -c $HANDLE -- sed -i -e"1a\
+deb-src http://ftp.uk.debian.org/debian/ experimental main" /etc/apt/sources.list
+
+schroot -u root -r -c $HANDLE -- apt-get update
+schroot -u root -r -c $HANDLE -- apt-get upgrade
+schroot -u root -r -c $HANDLE -- apt-get --assume-yes --no-install-recommends install fakeroot
+schroot -u root -r -c $HANDLE -- apt-get --assume-yes --no-install-recommends build-dep mysql-5.5
+
+schroot -r -c $HANDLE
+
+sed -i -e"/$HANDLE/d" $SHOME/current
+schroot -e -c $HANDLE

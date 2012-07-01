@@ -1,12 +1,12 @@
 ---
 workspace_dir: /home/sisyphus/mysql-5.5
 default_args:
-    sender: np.bamber@gmail.com
+    sender: nicholas@periapt.co.uk
     contact_on_pass: periapt@debian.org
 tests:
     - 
         name: build_from_scratch
-        module: BuildFromScratch
+        module: Sisyphus::Tests::BuildFromScratch
     -
         name: test2
         module: Deterministic

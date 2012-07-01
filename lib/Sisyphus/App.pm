@@ -37,7 +37,7 @@ has retry_test => (
 
 has default_args => (
     is => 'ro',
-    isa => 'Any',
+    isa => 'HashRef[Str]',
     default => sub {{}},
     documentation => qq{Arguments to be passed to every test unless overridden.},
 );
@@ -73,6 +73,9 @@ sub run {
         my $state = $self->_status->get_status($name);
         next if $state ne 'UNTRIED';
         my $module = $test->{module};
+        if (not exists $test->{args}) {
+            $test->{args} = {};
+        }
         my %args = (%{$self->default_args}, %{$test->{args}});
         $module->require;
         my $test_obj = $module->new(%args);
@@ -98,6 +101,7 @@ sub run {
             if ($@) {
                 $self->_status->set_status($name, $status);
             }
+            print $results;
             $self->_status->set_status(
                 $name,
                 $test_obj->has_passed ? 'PASS' : 'FAIL'

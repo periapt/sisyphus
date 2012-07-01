@@ -1,0 +1,91 @@
+1.) a script that does the following tests in a schroot:
+    checks out the package
+    builds it
+    runs lintian
+    runs piuparts
+    runs other tests
+    keeps the schroot environment uptodate
+
+2.) Testable
+    A Testable object can:
+        run_test        - req
+        verify_results  - req
+        send_results
+        check_preconditions
+
+        has_run         - ro
+        has_passed      - ro
+        contact_on_pass - rw
+        contact_on_failure - rw
+        results         - ro
+        depends_on      - ro
+
+2a) Status
+    set_status
+    get_status
+
+    values always one of $Sisyphus::Status::PASS|FAIL|SKIPPED|UNKNOWN
+    'UNKNOWN' is the default
+
+3.) Schrooted 
+    A Schrooted object can:
+        run_command
+See System::Command and schroot
+
+4.) SchrootedTest
+Takes a schroot name and a commands to run. The results consist of
+the stdout/stderr and the pass/fail depends on the exit code.
+
+5.) The script would read a config file and work throw these tests
+one at a time emailing out the results according to test or failure.
+
+6.) Steps
+a.) setup a user
+# adduser --system --home /home/sisyphus --shell /bin/bash --disabled-password --group sisyphus
+
+b.) create base system
+# debootstrap --arch i386 sid /home/sisyphus/chroot-sid http://ftp.uk.debian.org/debian
+
+c.) Add this stanza to /etc/schroot.conf
+[sisyphus]
+description=Sisyphus sid (unstable)
+type=directory
+union-type=aufs
+directory=/home/sisyphus/chroot-sid
+users=nicholas,sisyphus
+groups=sbuild
+root-users=sisyphus
+
+    c.) write Testable role
+    d.) write Schrooted role
+    e.) SchrootedTest
+
+7.) What do we get? An executable, sisyphus, that takes
+the following options:
+    --test-list <yaml config file>
+    --retry-test <test name>
+    --purge-test-status
+    --dry-run
+
+The key part of the config file would be a list of tests. Each test would
+be a test name, module name and a list of arguments. A run of the
+script will go through the list of tests, executing each, emailing
+out the results and recording a result: pass, failed, skipped in the status
+file. The normal weekly sisyphus run would use the '--purge-test-status' 
+to ensure that the full test run. If the script was run from the command
+line the assumption is that this is to restart the tests from the point where they
+failed.
+
+8.) Perl modules to use:
+    MooseX::Getopt - to handle the commandline
+    MooseX::ConfigFromFile - to handle the config file
+    MooseX::SimpleConfig - needs packaging?
+    Sisyphus::App - guts of the thing
+    Sisyphus::Testable - role representing a testable object.
+    Sisyphus::Test::* - various objects instantiating the Testable role
+    Sisyphus::Status - wrapper around tied hash but with Readonly safety
+    System::Command
+
+
+
+

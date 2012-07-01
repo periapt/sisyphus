@@ -28,7 +28,7 @@ has session => (
 sub _build_session {
     my $self = shift;
     my $system = System::Command->new('schroot -b -c sisyphus');
-    return slurp $system->stdout() if $system->exit() == 0;
+    return slurp $system->stdout() if $system->exit() eq 0;
     warn $system->stderr;
     return 0;
 }
@@ -61,12 +61,12 @@ sub command {
     }
     $full_command .= " -- $command";
     my $system = System::Command->new($full_command);
-    $system->close();
     my %results = ();
     $results{cmdline} = $system->cmdline();
     $results{pid} = $system->pid();
     $results{stderr} = slurp $system->stderr();
     $results{stdout} = slurp $system->stdout();
+    $system->close();
     $results{exit} = $system->exit();
     $results{core} = $system->core();
     $results{signal} = $system->signal();
