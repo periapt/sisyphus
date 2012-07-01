@@ -1,14 +1,17 @@
 #!/bin/dash -e
 
+# Initial setup
 SHOME=/home/sisyphus
 TARFILE=mysql-5.5_5.5.25+dfsg.orig.tar.gz
 
+# checkout source code
 cd $SHOME
 rm -rf mysql-5.5
 debcheckout mysql-5.5
 cp -v $SHOME/data/$TARFILE $SHOME/mysql-5.5/branches
 tar xzvf $HOME/data/$TARFILE -C $SHOME/mysql-5.5/branches/experimental --strip-components 1
 
+# Build from scratch test
 HANDLE=`schroot -b -c sisyphus`
 echo $HANDLE>>$SHOME/current
 
@@ -20,7 +23,17 @@ schroot -u root -r -c $HANDLE -- apt-get upgrade
 schroot -u root -r -c $HANDLE -- apt-get --assume-yes --no-install-recommends install fakeroot
 schroot -u root -r -c $HANDLE -- apt-get --assume-yes --no-install-recommends build-dep mysql-5.5
 
-schroot -r -c $HANDLE
+mkdir $HOME/mysql-5.5/results
+schroot --directory $SHOME/mysql-5.5/branches -r -c $HANDLE -- dpkg-buildpackage -us -uc 2>&1 > $HOME/mysql-5.5/results/mysql.log
 
 sed -i -e"/$HANDLE/d" $SHOME/current
 schroot -e -c $HANDLE
+for i in deb changes dsc gz
+do
+	cp -v $SHOME/mysql-5.5/branches/*.$i $HOME/mysql-5.5/results
+done
+
+# Lintian test
+TMPDIR=/home/sisyphus/tmp lint mysql-5.5/branches/mysql-5.5_5.5.25+dfsg-2_amd64.changes > $HOME/mysql-5.5/results/lintian.log
+diff $HOME/data/mysql-linitan.log $HOME/mysql-5.5/results/lintian.log
+
