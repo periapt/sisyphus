@@ -19,4 +19,49 @@ sub verify_results {
     return Load($results)->{pass};
 }
 
-1
+=head1 NAME
+
+Sisyphus::Tests::BuildFromScratch - flexible build from scratch test
+
+=head1 VERSION
+
+Version 0.01
+
+=cut
+
+our $VERSION = '0.01';
+
+=head1 DESCRIPTION
+
+The L<Sisyphus::Tests::BuildFromScratch> encapsulates building a
+Debian package within a schroot.
+
+=head1 ATTRIBUTES
+
+=head1 METHODS
+
+=head2 run_test
+
+=head2 verify_results
+
+=head1 AUTHOR
+
+Nicholas Bamber, C<< <nicholas at periapt.co.uk> >>
+
+=head1 ACKNOWLEDGEMENTS
+
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2012 Nicholas Bamber.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of either: the GNU General Public License as published
+by the Free Software Foundation; or the Artistic License.
+
+See http://dev.perl.org/licenses/ for more information.
+
+
+=cut
+
+1; # End of Sisyphus

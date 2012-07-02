@@ -144,10 +144,9 @@ and its results. For the absolutely lazy it defaults to the class name.
 
 =head1 METHODS
 
-=head2 check_preconditions
+=head2 command
 
-By default this returns 1. A consuming class may override this
-to give a test external dependencies.
+=head2 DEMOLISH
 
 =head1 AUTHOR
 
